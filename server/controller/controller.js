@@ -5,6 +5,7 @@ module.exports ={
     getInventory: (req,res) => {
         const db = req.app.get('db');
         db.get_inventory().then(inventory => {
+            console.log(inventory);
             res.status(200).send(inventory)
         }).catch( err => console.log("OOPS! I Did It Again!", err));
     },
@@ -13,7 +14,8 @@ module.exports ={
     updateProducts: (req, res) => {
         const db = req.app.get('db');
         const {product_id} = req.params;
-        db.update_products( product_id).then(inventory => {
+        const {name, price, img_url} = req.body;
+        db.update_products( [product_id, name, price, img_url]).then(inventory => {
             res.status(200).send(inventory)
         }).catch(err => console.log("OOPS! I Dit It Again!", err));
     },

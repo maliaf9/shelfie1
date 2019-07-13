@@ -9,34 +9,63 @@ class Form extends Component{
        super(props);
        this.state= {
            
-           newProduct: [],
+           inventory: [],
            newImg: '',
            newName: '',
            newPrice: '',
            text: ''
-       }
+           
+        }
    }
 
-   componentDidMount(){
-    Axios.get('/api/inventory').then( res => {
-        console.log(res.data);
-        this.setState({
-            inventory: res.data
+   componentWillMount(){
+       this.handleChangeImage();
+       this.handleChangePrice();
+       this.handleChangeProduct();
+    
+    }
+
+    getInventory = ()=>{
+        console.log(this.inventory);
+        Axios.get('/api/inventory').then( res => {
+            console.log(res.data);
+            this.setState({
+                inventory: res.data
+            })
         })
-    })
+
     }
     
-   handleChange = (e) => {
+   handleChangePrice = (value) => {
        this.setState({
-        text: e.target.value
+        newPrice: value
        }
        )
 
    }
 
+   handleChangeImage = (value) => {
+    this.setState({
+     newImg: value
+    }
+    )
+
+}
+
+    handleChangeProduct = (value) => {
+        this.setState({
+        newName: value
+        }
+        )
+
+    }
+
+
    createProduct = () => {
        const {newName, newImg, newPrice} = this.state;
+       console.log(this.state);
     Axios.post('/api/products', {newName, newImg, newPrice}).then( res => {
+        console.log(this.state);
         this.setState({
             inventory: res.data
         })
@@ -54,9 +83,7 @@ class Form extends Component{
         })
     }
 
-    // cancelForm(){
-
-    // }
+    
 
     removeProduct = ( id ) => {
         Axios.delete(`/api/inventory/${id}` ).then( response => {
@@ -64,35 +91,30 @@ class Form extends Component{
         });
     }
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        const { newImg, newName, newPrice} = this.state;
-
-        Axios.post('/api/inventory', {newImg, newName, newPrice});
-    }
 
 
    render(){
-       const {newImg, newName, newPrice, inventory} = this.state;
  
        return (
-           <form onSubmit={this.handleSubmit}>
-               <div>
-                   Image URL:
-                   <input placeHolder='url' type = 'text' name='productImage' value={newImg} onChange={this.handleChange}/>
+      <div className="product_container">
+           
+             <div>
+                 <div> Image URL:</div> 
+                  <input onChange={(e) => this.handleChangeImage(e.target.value)} placeholder='url' type = 'text' name='newImg'  value={this.newImg}/>
                </div>
             <div>
-                Product Name:
-                <input placeHolder='Type Name' type = 'text' name='productName' value={newName} onChange={this.handleChange}/>
+                <div>Product Name:</div>
+               <input onChange={(e) => this.handleChangeProduct(e.target.value)} placeholder='Type Name' type = 'text' name='newName'  value={this.newName}/>
             </div>
-            <div>
-                Price:
-                <input placeHolder='0' type = 'text' name='productPrice' value={newPrice} onChange={this.handleChange}/>
-            </div>
+             <div>
+                 <div>Price:</div>
+                 <input onChange={(e) => this.handleChangePrice(e.target.value)} placeholder='0' type = 'number' name='newPrice'  value={this.newPrice}/>
+        </div>
 
-            <button onClick={this.handleSubmit}>Add</button>
+            <button onClick={this.createProduct}>Add</button> 
 
-           </form>
+          
+        </div>
        )
    }
 

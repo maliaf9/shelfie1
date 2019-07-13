@@ -1,3 +1,4 @@
 update inventory
-set name  = $1
-where product_id= 1;
+set  name  = $2, price = $3, img_url = $4
+
+where product_id = $1;
